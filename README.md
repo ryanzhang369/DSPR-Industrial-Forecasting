@@ -30,8 +30,8 @@ To bridge this gap, we propose **DSPR**, a trustworthy forecasting framework tha
 Due to licensing and file size constraints, raw datasets are not included in this repository. 
 Please download them manually:
 
-1. **TEP**: Download `TEP_FaultFree_Training.RData` from [Harvard Dataverse].
-2. **SDWPF**: Download `wtbdata_245days.csv` from [Baidu AI Studio].
+1. **TEP**: Download `TEP_FaultFree_Training.RData` from [[Harvard Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/6C3JR1#)].
+2. **SDWPF**: Download `wtbdata_245days.csv` from [[Baidu AI Studio](https://bj.bcebos.com/v1/ai-studio-online/85b5cb4eea5a4f259766f42a448e2c04a7499c43e1ae4cc28fbdee8e087e2385?responseContentDisposition=attachment%3B%20filename%3Dwtbdata_245days.csv&authorization=bce-auth-v1%2F0ef6765c1e494918bc0d4c3ca3e5c6d1%2F2022-05-05T14%3A17%3A03Z%2F-1%2F%2F5932bfb6aa3af1bcfb467bf2a4a6877f8823fe96c6f4fd0d4a3caa722354e3ac)].
 
 Place the files in this directory before running the preprocessing script.
 
