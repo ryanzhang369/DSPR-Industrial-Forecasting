@@ -13,20 +13,18 @@ unset LD_LIBRARY_PATH
 
 
 DATA_FILE="sdwpf_turbine_1_for_dspr.csv"
+
 PHYSICS_FILE="sdwpf_physics.csv"
 
 
 TARGET_COL="Patv"    
 CONTROL_COL="Pab1"   
 RUN_NAME="SDWPF_Turbine1_Run01"
+SAVE_DIR="./records"
 
 echo "-----------------------------------------------------"
-echo "Starting DSPR Training on SDWPF Wind Turbine..."
-echo "Target: $TARGET_COL"
-echo "Physics Prior: $PHYSICS_FILE"
-echo "Data File: $DATA_FILE"
+echo "Step 1: Starting DSPR Training..."
 echo "-----------------------------------------------------"
-
 
 python -u main_dspr.py \
   --root_path ./ \
@@ -40,7 +38,7 @@ python -u main_dspr.py \
   --freq t \
   --seq_len 96 \
   --label_len 0 \
-  --pred_len 12 \
+  --pred_len 24 \
   \
   --control_col $CONTROL_COL \
   --batch_size 64 \
@@ -59,3 +57,28 @@ python -u main_dspr.py \
   --lambda_phys 0.05 \
   --gpu 0
 
+
+LATEST_RES_DIR=$(ls -td ${SAVE_DIR}/${RUN_NAME}_*/results | head -1)
+
+if [ -z "$LATEST_RES_DIR" ]; then
+    echo "Error: Could not find results directory."
+    exit 1
+fi
+
+echo "-----------------------------------------------------"
+echo "Step 2: Starting Physics Evaluation..."
+echo "Target Dir: $LATEST_RES_DIR"
+echo "-----------------------------------------------------"
+
+
+python evaluate_physics.py \
+  --path "$LATEST_RES_DIR" \
+  --DATA_INTERVAL_S 600 \
+  --CONTROL_CYCLE_STEPS 3 \
+  --PHYSICAL_WINDOW 70 \
+  --DA_DEADBAND 0.0001 \
+  --EPSILON 1e-7
+
+echo "-----------------------------------------------------"
+echo "All Tasks Done. Check $LATEST_RES_DIR/physics_results.json"
+echo "-----------------------------------------------------"
