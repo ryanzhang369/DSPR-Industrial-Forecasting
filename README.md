@@ -25,6 +25,15 @@ To bridge this gap, we propose **DSPR**, a trustworthy forecasting framework tha
 * 
 **Pareto-Optimal Performance:** Achieves state-of-the-art accuracy while maintaining near-ideal physical consistency (Mean Conservation Accuracy > 99%).
 
+# Datasets
+
+Due to licensing and file size constraints, raw datasets are not included in this repository. 
+Please download them manually:
+
+1. **TEP**: Download `TEP_FaultFree_Training.RData` from [Harvard Dataverse].
+2. **SDWPF**: Download `wtbdata_245days.csv` from [Baidu AI Studio].
+
+Place the files in this directory before running the preprocessing script.
 
 
 ## 🧪 Experiments
