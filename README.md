@@ -85,7 +85,7 @@ We evaluate DSPR on four diverse industrial datasets spanning Chemical Kinetics 
 DSPR achieves Pareto-optimal performance, simultaneously reducing forecasting error (MAE/RMSE) compared to state-of-the-art baselines while enforcing strict adherence to physical laws—resolving the accuracy-fidelity dilemma that plagues conventional data-driven models.
 
 ![Main Results Comparison](figures/results_table.jpg)
-*Figure 3: **Performance comparison on industrial benchmarks.** DSPR achieves Pareto-optimal performance. It not only reduces forecasting error (MAE/RMSE) compared to state-of-the-art baselines but also enforces strict adherence to physical laws, maintaining **>99% Mean Conservation Accuracy** and high signal fidelity (**TVR 88%–97%**) across all datasets.*
+*Figure 3: **Performance comparison on industrial benchmarks.** DSPR achieves Pareto-optimal performance. It not only reduces forecasting error (MAE/RMSE) compared to state-of-the-art baselines but also enforces strict adherence to physical laws, maintaining **>99% Mean Conservation Accuracy** and high signal fidelity (**TVR 83%–97%**) across all datasets.*
 
 ### Key Evaluation Metrics
 
