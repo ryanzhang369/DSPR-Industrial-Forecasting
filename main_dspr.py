@@ -15,21 +15,15 @@ from sklearn.metrics import r2_score
 from datetime import datetime
 from tqdm import tqdm
 
-# --- Core model imports ---
-try:
-    from models.TimeMixer import Model as TimeMixer
-    from layers.dyna_explain_graph_constructor import AdaptiveDynamicGraphConstructor
-    from layers.dyna_explain_graph_layer import AdaptiveWindowDGNNLayer
-    from utils.timefeatures import time_features as TimeFeatureEncoding
-except ImportError:
-    print("Error: Model files not found. Please ensure models/, layers/, and utils/ directories exist.")
-    sys.exit(1)
 
-# =============================================================================
-# 0. Utility functions
-# =============================================================================
+from models.TimeMixer import Model as TimeMixer
+from layers.dyna_explain_graph_constructor import AdaptiveDynamicGraphConstructor
+from layers.dyna_explain_graph_layer import AdaptiveWindowDGNNLayer
+from utils.timefeatures import time_features as TimeFeatureEncoding
+
+
+
 def fix_seed(seed):
-    """Fix random seeds for reproducibility."""
     random.seed(seed)
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -39,7 +33,6 @@ def fix_seed(seed):
     torch.backends.cudnn.benchmark = False
 
 def get_logger(log_dir):
-    """Dual logging: write to file and print to stdout."""
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     logger = logging.getLogger('DSPR_Experiment')
@@ -54,7 +47,6 @@ def get_logger(log_dir):
     return logger
 
 def metric(pred, true):
-    """Compute evaluation metrics."""
     MAE = np.mean(np.abs(pred - true))
     MSE = np.mean((pred - true) ** 2)
     RMSE = np.sqrt(MSE)
@@ -62,9 +54,7 @@ def metric(pred, true):
     R2 = r2_score(true.flatten(), pred.flatten())
     return MAE, MSE, RMSE, MAPE, R2
 
-# =============================================================================
-# 1. Physics graph loader
-# =============================================================================
+
 class PhysicsLoader:
     @staticmethod
     def load_adjacency_matrix(adj_path, model_columns, device, logger):
@@ -95,9 +85,6 @@ class PhysicsLoader:
             adj_tensor = adj_tensor / (adj_tensor.max() + 1e-8)
         return adj_tensor.to(device)
 
-# =============================================================================
-# 2. DSPR model definition
-# =============================================================================
 class TimeMixerConfigs:
     def __init__(self, args):
         self.__dict__.update(vars(args))
@@ -150,7 +137,7 @@ class DSPR(nn.Module):
 
         # Backbone
         configs = TimeMixerConfigs(args)
-        configs.c_out = args.c_out
+        configs.c_out = args.enc_in
         self.backbone = TimeMixer(configs)
 
         # Fusion coefficient
@@ -211,9 +198,7 @@ class DSPR(nn.Module):
             return final_pred, dynamic_adj, win
         return final_pred
 
-# =============================================================================
-# 3. Data processing
-# =============================================================================
+
 class CustomDataset(Dataset):
     def __init__(self, data, time_enc, seq_len, pred_len, u_idx, features='MS'):
         self.data = data
@@ -307,9 +292,6 @@ def prepare_data(args, logger):
 
     return train_loader, val_loader, test_loader, scaler, sorted_cols
 
-# =============================================================================
-# 4. Main pipeline
-# =============================================================================
 def main():
     parser = argparse.ArgumentParser(description='DSPR Runner')
 
@@ -403,9 +385,8 @@ def main():
 
     logger.info(f"[-] Model Parameters: {sum(p.numel() for p in model.parameters()):,}")
 
-    # =======================================================
     # Training loop
-    # =======================================================
+
     best_val_loss = float('inf')
     early_stop_count = 0
 
@@ -472,9 +453,8 @@ def main():
                 logger.info("[-] Early stopping triggered.")
                 break
 
-    # =======================================================
+    
     # Testing
-    # =======================================================
     logger.info("[-] Starting testing...")
     model.load_state_dict(torch.load(os.path.join(ckpt_dir, 'checkpoint.pth')))
     model.eval()
