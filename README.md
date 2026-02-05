@@ -6,16 +6,20 @@ This repository contains the official PyTorch implementation for the paper:
 
 ## 📖 Introduction
 
-Forecasting complex industrial systems (e.g., chemical kinetics, energy meteorology) requires balancing statistical precision with physical plausibility. Standard deep learning models often achieve low error rates (MSE/MAE) but fail to respect fundamental conservation laws or causal logic—a phenomenon we term **"fidelity collapse."**
+Forecasting complex industrial systems—spanning chemical kinetics, thermal dynamics, and energy meteorology—requires balancing statistical precision with physical plausibility. While standard deep learning models often achieve low prediction errors (MSE/MAE), they frequently violate fundamental conservation laws and causal relationships, a phenomenon we term **"fidelity collapse."**
 
-**DSPR (Dual-Stream Physics-Residual Network)** addresses this by shifting physics integration from passive loss penalties (like in PINNs) to **active architectural inductive biases**. Instead of forcing a single model to learn everything, DSPR explicitly decouples the workflow:
+**DSPR (Dual-Stream Physics-Residual Network)** addresses this challenge by shifting physics integration from passive loss penalties to **active architectural inductive biases**. Rather than forcing a single model to capture all dynamics, DSPR explicitly decouples the forecasting workflow into two specialized streams:
 
-1. **Trend Stream**: Handles high-energy, inertial patterns using a statistical base forecaster.
-2. **Residual Stream**: Focuses purely on regime-dependent deviations (transients) using physics-guided graph structures and adaptive delays.
+1. **Statistical Trend Stream**: Captures high-energy, inertial temporal patterns using a robust statistical forecaster, ensuring stable baseline performance.
+
+2. **Physics-Aware Residual Stream**: Models regime-dependent deviations and transient dynamics through physics-guided dynamic graphs and adaptive temporal windows that respect flow-dependent transport delays.
+
+This architectural decoupling enables DSPR to achieve state-of-the-art predictive accuracy while maintaining near-ideal physical fidelity, bridging the gap between data-driven forecasting and trustworthy industrial deployment.
+
 
 ## 🏗️ Methodology
 
-![DSPR Architecture](figures/fig2.png)
+![DSPR Architecture](figures/fig_architecture.jpg)
 *Figure 1: **The dual-stream architecture of DSPR.** The Statistical Stream captures global trends, while the Physics-Aware Stream explicitly models regime-dependent residuals through adaptive delays and dynamic graphs.*
 
 The DSPR framework addresses non-stationarity in industrial systems by structurally decoupling dynamics into two orthogonal components: a stable **Statistical Trend Stream** and a regime-dependent **Physics-Aware Residual Stream**.
@@ -46,7 +50,7 @@ The environment setup follows the standard `Time-Series-Library` benchmark but e
 **Step 1: Clone the repository**
 
 ```bash
-git clone https://github.com/YourUsername/DSPR-Industrial-Forecasting.git
+git clone https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git
 cd DSPR-Industrial-Forecasting
 
 ```
@@ -58,19 +62,6 @@ pip install -r requirements.txt
 
 ```
 
-*Recommended `requirements.txt` content:*
-
-```text
-torch>=1.10.0
-numpy
-pandas
-scikit-learn
-matplotlib
-einops
-tqdm
-scipy
-
-```
 
 ## Datasets
 
@@ -135,7 +126,6 @@ python run.py \
   --c_out 52 \
   --des 'Exp' \
   --itr 1
-
 
 
 ---
