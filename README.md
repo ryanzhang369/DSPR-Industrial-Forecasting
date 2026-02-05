@@ -19,7 +19,7 @@ This architectural decoupling enables DSPR to achieve state-of-the-art predictiv
 
 ## Methodology
 
-![DSPR Architecture](figures/fig_architecture.pdf)
+![DSPR Architecture](figures/fig_architecture.jpg)
 *Figure 1: **The dual-stream architecture of DSPR.** The Statistical Stream captures global trends, while the Physics-Aware Stream explicitly models regime-dependent residuals through adaptive delays and dynamic graphs.*
 
 The DSPR framework addresses non-stationarity in industrial systems by structurally decoupling dynamics into two orthogonal components: a stable **Statistical Trend Stream** and a regime-dependent **Physics-Aware Residual Stream**.
