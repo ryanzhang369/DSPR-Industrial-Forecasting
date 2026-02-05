@@ -78,7 +78,7 @@ Due to licensing constraints, raw data is not distributed with this repo. Please
 
 
 
-## 🧪 Experiments
+## Experiments
 
 We evaluate DSPR on four diverse industrial datasets spanning Chemical Kinetics (**SCR**), Thermodynamics (**Rotary Kiln**), Process Control (**TEP**), and Fluid Dynamics (**SDWPF**). These benchmarks represent a spectrum from micro-scale reactions to macro-scale environmental physics, testing DSPR's generalization across heterogeneous physical regimes.
 
