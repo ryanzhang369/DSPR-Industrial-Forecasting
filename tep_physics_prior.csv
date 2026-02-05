@@ -1,0 +1,7 @@
+Name,Reactor_Pressure,Reactor_Temp,Reactor_Level
+Reactor_Temp,5.0,0,0
+Reactor_Feed_Rate,4.0,2.0,3.0
+Reactor_Level,4.0,0,0
+Reactor_Cooling_Valve,0,5.0,0
+Product_Sep_Level,2.0,0,0
+Reactor_Pressure,0,3.0,0
