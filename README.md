@@ -78,22 +78,35 @@ Due to licensing constraints, raw data is not distributed with this repo. Please
 
 
 
-## Experiments
+## Experiments & Full Results
 
-We evaluate DSPR on four diverse industrial datasets spanning Chemical Kinetics (**SCR**), Thermodynamics (**Rotary Kiln**), Process Control (**TEP**), and Fluid Dynamics (**SDWPF**). These benchmarks represent a spectrum from micro-scale reactions to macro-scale environmental physics, testing DSPR's generalization across heterogeneous physical regimes.
+> **Note:** Due to strict space constraints in the KDD 2026 proceedings, the granular performance breakdown across varying prediction horizons is provided here as supplementary material. For offline reading, please refer to the [`Supplementary_Material.pdf`](./Supplementary_Material.pdf) located in the repository root.
 
-DSPR achieves Pareto-optimal performance, simultaneously reducing forecasting error (MAE/RMSE) compared to state-of-the-art baselines while enforcing strict adherence to physical laws—resolving the accuracy-fidelity dilemma that plagues conventional data-driven models.
+We evaluate DSPR on four diverse industrial datasets spanning Chemical Kinetics (**SCR**), Thermodynamics (**Rotary Kiln**), Process Control (**TEP**), and Fluid Dynamics (**SDWPF**). These benchmarks represent a spectrum from micro-scale reactions to macro-scale environmental physics, rigorously testing DSPR's generalization across heterogeneous physical regimes.
 
-![Main Results Comparison](figures/results_table.jpg)
-*Figure 3: **Performance comparison on industrial benchmarks.** DSPR achieves Pareto-optimal performance. It not only reduces forecasting error (MAE/RMSE) compared to state-of-the-art baselines but also enforces strict adherence to physical laws, maintaining **>99% Mean Conservation Accuracy** and high signal fidelity (**TVR 83%–97%**) across all datasets.*
+### Physical Time Constants & Evaluation Horizons (H)
+
+A key distinction of our evaluation protocol is that the prediction horizons (*H*) are not uniform across all datasets. Instead, they are explicitly customized to align with the intrinsic physical time constants and control dynamics of each system:
+
+* **SCR (Chemical Kinetics):** We select short-to-medium horizons (H=24, 48, 96, 192) to capture the rapid chemical reaction kinetics and variable transport delays (seconds to minutes) characteristic of denitrification processes.
+* **Kiln (Thermodynamics):** Given the massive thermal inertia of the rotary kiln, we extend horizons (H=96, 192, 336, 720) to cover longer durations, enabling the assessment of slow-moving thermodynamic trends and combustion efficiency shifts.
+* **TEP (Process Control):** Horizons are restricted to the *transient response window* (H=6, 12, 18, 24). This range effectively covers the open-loop dynamic phase before feedback controllers fully stabilize the reactor pressure, avoiding the trivial task of predicting steady-state setpoints.
+* **SDWPF (Wind Energy):** In the absence of Numerical Weather Predictions (NWP), we limit evaluation to the *inertial forecasting regime* (H=12, 24, 36, 48). This strictly targets the ultra-short-term dispatch market, where local kinematic history retains predictive validity before atmospheric chaos dominates.
+
+### Full Performance Breakdown
+
+DSPR achieves Pareto-optimal performance across all benchmarks. It simultaneously reduces forecasting statistical errors (MAE/RMSE) compared to state-of-the-art baselines while enforcing strict adherence to physical laws—successfully resolving the accuracy-fidelity dilemma that typically plagues conventional data-driven models.
+
+![Granular Performance Breakdown](figures/full_results.jpg)
+*Figure 3: **Granular performance comparison on industrial benchmarks.** DSPR not only achieves the lowest MAE/RMSE but also maintains **>99% Mean Conservation Accuracy** and high signal fidelity (**TVR 83%–97%**) across both short-term transients and long-term horizons.*
 
 ### Key Evaluation Metrics
 
-- **MCA (Mean Conservation Accuracy):** Quantifies the percentage of predictions satisfying physical constraints (e.g., mass/energy balance). Higher values indicate better physical consistency.
+To rigorously evaluate Physical Consistency alongside statistical accuracy, we utilize three specialized metrics:
 
-- **TVR (Total Variation Ratio):** Assesses whether the model captures realistic signal volatility versus over-smoothing artifacts. Values approaching 100% indicate preservation of physically meaningful transients.
-
-- **TDA (Trend Directional Accuracy):** Evaluates correctness of predicted trend directions, measuring the model's ability to anticipate regime transitions.
+* **MCA (Mean Conservation Accuracy):** Quantifies the percentage of predictions satisfying physical constraints (e.g., mass/energy balance) relative to the ground truth. Higher values indicate better physical consistency.
+* **TVR (Total Variation Ratio):** Assesses whether the model captures realistic signal volatility versus producing over-smoothing artifacts. Values approaching 100% indicate the successful preservation of physically meaningful high-frequency transients.
+* **TDA (Trend Directional Accuracy):** Evaluates the correctness of predicted trend directions during significant state shifts, measuring the model's adherence to physical causality and its ability to anticipate regime transitions.
 
 
 
