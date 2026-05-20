@@ -1,119 +1,126 @@
-# DSPR-Industrial-Forecasting
+<p align="center">
+  <img src="https://img.shields.io/badge/KDD-2026-006dad" alt="KDD 2026" />
+  <img src="https://img.shields.io/badge/status-official_code-d9643a" alt="Official Code" />
+  <img src="https://img.shields.io/badge/Python-3.8+-3776AB?logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/PyTorch-1.10+-EE4C2C?logo=pytorch&logoColor=white" alt="PyTorch" />
+  <img src="https://img.shields.io/badge/task-Industrial_Forecasting-791d94" alt="Task" />
+</p>
 
-This repository contains the official PyTorch implementation for the paper:
+<h1 align="center">DSPR: Dual-Stream Physics-Residual Networks</h1>
+<p align="center"><strong>The Official PyTorch Implementation for KDD 2026 Paper</strong></p>
 
-**"DSPR: Dual-Stream Physics-Residual Networks for Trustworthy Industrial Time Series Forecasting"**.
+<p align="center">
+  <a href="#introduction">Introduction</a> •
+  <a href="#methodology">Methodology</a> •
+  <a href="#installation">Installation</a> •
+  <a href="#datasets">Datasets</a> •
+  <a href="#experiments--full-results">Experiments</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#citation">Citation</a>
+</p>
+
+---
 
 ## Introduction
 
-Forecasting complex industrial systems—spanning chemical kinetics, thermal dynamics, and energy meteorology—requires balancing statistical precision with physical plausibility. While standard deep learning models often achieve low prediction errors (MSE/MAE), they frequently violate fundamental conservation laws and causal relationships, a phenomenon we term **"fidelity collapse."**
+Forecasting complex industrial systems across domains such as chemical kinetics, thermal dynamics, and energy meteorology requires a rigorous balance between statistical precision and physical plausibility. While standard deep learning models often achieve low prediction errors (MSE/MAE), they frequently violate fundamental conservation laws and causal relationships, a phenomenon we term **"fidelity collapse."**
 
-**DSPR (Dual-Stream Physics-Residual Network)** addresses this challenge by shifting physics integration from passive loss penalties to **active architectural inductive biases**. Rather than forcing a single model to capture all dynamics, DSPR explicitly decouples the forecasting workflow into two specialized streams:
+**DSPR (Dual-Stream Physics-Residual Network)** addresses this challenge by shifting physics integration from passive loss penalties to **active architectural inductive biases**. Instead of forcing a single model to capture all complex dynamics, DSPR explicitly decouples the forecasting workflow into two specialized streams:
 
-1. **Statistical Trend Stream**: Captures high-energy, inertial temporal patterns using a robust statistical forecaster, ensuring stable baseline performance.
+* **Statistical Trend Stream**: Captures high-energy, inertial temporal patterns using a robust statistical forecaster, ensuring stable baseline performance.
+* **Physics-Aware Residual Stream**: Models regime-dependent deviations and transient dynamics through physics-guided dynamic graphs and adaptive temporal windows that respect flow-dependent transport delays.
 
-2. **Physics-Aware Residual Stream**: Models regime-dependent deviations and transient dynamics through physics-guided dynamic graphs and adaptive temporal windows that respect flow-dependent transport delays.
+> **Key Impact:** This architectural decoupling enables DSPR to achieve state-of-the-art predictive accuracy while maintaining near-ideal physical fidelity, effectively bridging the gap between data-driven forecasting and trustworthy industrial deployment.
 
-This architectural decoupling enables DSPR to achieve state-of-the-art predictive accuracy while maintaining near-ideal physical fidelity, bridging the gap between data-driven forecasting and trustworthy industrial deployment.
-
+---
 
 ## Methodology
 
-![DSPR Architecture](figures/fig_architecture.jpg)
-*Figure 1: **The dual-stream architecture of DSPR.** The Statistical Stream captures global trends, while the Physics-Aware Stream explicitly models regime-dependent residuals through adaptive delays and dynamic graphs.*
+<p align="center">
+  <img src="figures/fig_architecture.jpg" alt="DSPR Architecture" width="90%" />
+  <br />
+  <em>Figure 1: <strong>The dual-stream architecture of DSPR.</strong> The Statistical Stream captures global trends, while the Physics-Aware Stream explicitly models regime-dependent residuals through adaptive delays and dynamic graphs.</em>
+</p>
 
 The DSPR framework addresses non-stationarity in industrial systems by structurally decoupling dynamics into two orthogonal components: a stable **Statistical Trend Stream** and a regime-dependent **Physics-Aware Residual Stream**.
 
-The **Statistical Trend Stream** serves as the backbone forecaster. Utilizing **TimeMixer**, it captures high-energy, inertial temporal patterns and global evolution, prioritizing stability to maintain robust baseline performance in noisy environments. By absorbing dominant trends, it enables the secondary stream to focus exclusively on modeling complex local deviations that standard regressors often miss.
+* **Statistical Trend Stream (Backbone Forecaster)**: Utilizing **TimeMixer**, it captures high-energy, inertial temporal patterns and global evolution, prioritizing stability to maintain robust baseline performance in noisy environments. By absorbing dominant trends, it enables the secondary stream to focus exclusively on modeling complex local deviations that standard regressors often miss.
+* **Physics-Aware Residual Stream**: Captures transient fluctuations and regime shifts through two parallel branches:
+  1. **Static Branch**: Encodes time-invariant spatial constraints by fusing a domain-specific physical prior matrix ($\mathbf{A}^{\text{prior}}$) with learnable node embeddings, constructing a stable graph topology that respects fundamental system connectivity.
+  2. **Dynamic Branch**: Addresses non-stationary physics via an *Adaptive Window Mechanism* that learns flow-dependent transport delays ($\tau_{t,c}$) to align asynchronous signals, alongside a *Physics-Guided Dynamic Graph* that separates causal interactions from spurious correlations by computing a time-varying adjacency matrix.
 
-The **Physics-Aware Residual Stream** captures transient fluctuations and regime shifts through two parallel branches. The **Static Branch** encodes time-invariant spatial constraints by fusing a domain-specific physical prior matrix ($\mathbf{A}^{\text{prior}}$) with learnable node embeddings, constructing a stable graph topology that respects fundamental system connectivity. Simultaneously, the **Dynamic Branch** addresses non-stationary physics via two key mechanisms:
+Outputs from both streams are seamlessly integrated via a **Gated Fusion Mechanism**. A learnable gating vector adaptively weights the physical residual contribution, adding it to the trend forecast only when regime-specific corrections are necessary.
 
-1. An **Adaptive Window Mechanism** that learns flow-dependent transport delays ($\tau_{t,c}$). Unlike fixed lookback windows, this module dynamically adjusts the receptive field for each variable based on current operating conditions, aligning asynchronous signals caused by varying flow rates.
+---
 
-2. A **Physics-Guided Dynamic Graph** that separates causal interactions from spurious correlations by computing a time-varying adjacency matrix to capture transient couplings emerging only under specific regimes (e.g., high-load vs. idle states).
-
-Finally, outputs from both streams are integrated via a **Gated Fusion Mechanism**. A learnable gating vector adaptively weights the physical residual contribution, adding it to the trend forecast only when regime-specific corrections are necessary. This architectural bias ensures adherence to physical laws without sacrificing statistical precision.
-
-
-
-
-## Installation
+## ⚙️ Installation
 
 The environment setup follows the standard `Time-Series-Library` benchmark but excludes heavy dependencies required for Large Language Models (LLMs).
 
-**Requirements:**
-
+### Requirements
 * Python 3.8+
 * PyTorch 1.10+
 * NVIDIA CUDA toolkit (for GPU acceleration)
 
-**Step 1: Clone the repository**
-
 ```bash
-git clone https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git
+# Step 1: Clone the repository
+git clone [https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git](https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git)
 cd DSPR-Industrial-Forecasting
 
-```
-
-**Step 2: Install dependencies**
-
-```bash
+# Step 2: Install dependencies
 pip install -r requirements.txt
 
 ```
 
+---
 
 ## Datasets
 
-Due to licensing constraints, raw data is not distributed with this repo. Please download and place them in the `./dataset` directory.
+Due to licensing constraints, raw data is not distributed with this repository. Please download and place the files in the corresponding `./dataset` directory.
 
-1. **TEP (Tennessee Eastman Process)**:
-* Download `TEP_FaultFree_Training.RData` from [[Harvard Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/6C3JR1#)].
+| Dataset | Type | Physical Prior Type | Source Link / Availability |
+| --- | --- | --- | --- |
+| **TEP** | Public | Coupled Reaction Kinetics | [Harvard Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/6C3JR1#) |
+| **SDWPF** | Public | Fluid Dynamics & Wind Kinematics | [Baidu AI Studio](https://aistudio.baidu.com/competition/detail/152/0/introduction) |
+| **SCR** | Proprietary | Local Mass Balance | Private (Protected by corporate IP policies) |
+| **Rotary Kiln** | Proprietary | Multi-Regime Thermodynamics | Private (Protected by corporate IP policies) |
 
-2. **SDWPF (Solar/Wind Power)**:
-* Download `wtbdata_245days.csv` from [[Baidu AI Studio](https://aistudio.baidu.com/competition/detail/152/0/introduction)].
-
-3. **SCR & Rotary Kiln**:
-* These datasets are proprietary industrial data and cannot be released due to company privacy policies.
-
-
+---
 
 ## Experiments & Full Results
 
-> **Note:** Due to strict space constraints in the KDD 2026 proceedings, the granular performance breakdown across varying prediction horizons is provided here as supplementary material. For offline reading, please refer to the [`Supplementary_Material.pdf`](./Supplementary_Material.pdf) located in the repository root.
+> **Supplementary Note:** Due to strict space constraints in the KDD 2026 proceedings, the granular performance breakdown across varying prediction horizons is provided as supplementary material. For offline reading, please refer to the [`Supplementary_Material.pdf`](https://www.google.com/search?q=./Supplementary_Material.pdf) located in the repository root.
 
-We evaluate DSPR on four diverse industrial datasets spanning Chemical Kinetics (**SCR**), Thermodynamics (**Rotary Kiln**), Process Control (**TEP**), and Fluid Dynamics (**SDWPF**). These benchmarks represent a spectrum from micro-scale reactions to macro-scale environmental physics, rigorously testing DSPR's generalization across heterogeneous physical regimes.
+We evaluate DSPR on four diverse industrial datasets representing a spectrum from micro-scale reactions to macro-scale environmental physics, rigorously testing DSPR's generalization across heterogeneous physical regimes.
 
-### Physical Time Constants & Evaluation Horizons (H)
+### Physical Time Constants & Evaluation Horizons ($H$)
 
-A key distinction of our evaluation protocol is that the prediction horizons (*H*) are not uniform across all datasets. Instead, they are explicitly customized to align with the intrinsic physical time constants and control dynamics of each system:
+Prediction horizons ($H$) are explicitly customized to align with the intrinsic physical time constants and control dynamics of each heterogeneous system:
 
-* **SCR (Chemical Kinetics):** We select short-to-medium horizons (H=24, 48, 96, 192) to capture the rapid chemical reaction kinetics and variable transport delays (seconds to minutes) characteristic of denitrification processes.
-* **Kiln (Thermodynamics):** Given the massive thermal inertia of the rotary kiln, we extend horizons (H=96, 192, 336, 720) to cover longer durations, enabling the assessment of slow-moving thermodynamic trends and combustion efficiency shifts.
-* **TEP (Process Control):** Horizons are restricted to the *transient response window* (H=6, 12, 18, 24). This range effectively covers the open-loop dynamic phase before feedback controllers fully stabilize the reactor pressure, avoiding the trivial task of predicting steady-state setpoints.
-* **SDWPF (Wind Energy):** In the absence of Numerical Weather Predictions (NWP), we limit evaluation to the *inertial forecasting regime* (H=12, 24, 36, 48). This strictly targets the ultra-short-term dispatch market, where local kinematic history retains predictive validity before atmospheric chaos dominates.
+| Dataset / Domain | Horizon Range ($H$) | Physical Optimization Target & Rationale |
+| --- | --- | --- |
+| **SCR** (Chemical) | `24, 48, 96, 192` | Captures rapid reaction kinetics and variable transport delays driven by fluctuating gas velocity. |
+| **Kiln** (Thermal) | `96, 192, 336, 720` | Extends to longer durations to evaluate slow-moving thermodynamic trends under massive thermal inertia. |
+| **TEP** (Process Control) | `6, 12, 18, 24` | Restricted to the *transient response window* before feedback controllers fully stabilize reactor pressure. |
+| **SDWPF** (Wind Energy) | `12, 24, 36, 48` | Strictly targets the *inertial forecasting regime* for the ultra-short-term dispatch market before chaos dominates. |
 
-### Full Performance Breakdown
+### Performance Highlights
 
-DSPR achieves Pareto-optimal performance across all benchmarks. It simultaneously reduces forecasting statistical errors (MAE/RMSE) compared to state-of-the-art baselines while enforcing strict adherence to physical laws—successfully resolving the accuracy-fidelity dilemma that typically plagues conventional data-driven models.
-
-![Granular Performance Breakdown](figures/full_results.jpg)
-*Figure 3: **Granular performance comparison on industrial benchmarks.** DSPR not only achieves the lowest MAE/RMSE but also maintains **>99% Mean Conservation Accuracy** and high signal fidelity (**TVR 83%–97%**) across both short-term transients and long-term horizons.*
+DSPR achieves Pareto-optimal performance across all benchmarks. It simultaneously reduces forecasting statistical errors (MAE/RMSE) compared to state-of-the-art baselines while enforcing strict adherence to physical laws.
 
 ### Key Evaluation Metrics
 
-To rigorously evaluate Physical Consistency alongside statistical accuracy, we utilize three specialized metrics:
+* **MCA (Mean Conservation Accuracy)**: Quantifies the percentage of predictions satisfying physical constraints (e.g., mass/energy balance). Higher values indicate better physical consistency.
+* **TVR (Total Variation Ratio)**: Assesses whether the model captures realistic signal volatility versus producing over-smoothing artifacts. Values closer to 100% indicate successful preservation of physical transients.
+* **TDA (Trend Directional Accuracy)**: Evaluates the correctness of predicted trend directions during significant state shifts, measuring adherence to physical causality.
 
-* **MCA (Mean Conservation Accuracy):** Quantifies the percentage of predictions satisfying physical constraints (e.g., mass/energy balance) relative to the ground truth. Higher values indicate better physical consistency.
-* **TVR (Total Variation Ratio):** Assesses whether the model captures realistic signal volatility versus producing over-smoothing artifacts. Values approaching 100% indicate the successful preservation of physically meaningful high-frequency transients.
-* **TDA (Trend Directional Accuracy):** Evaluates the correctness of predicted trend directions during significant state shifts, measuring the model's adherence to physical causality and its ability to anticipate regime transitions.
-
-
+---
 
 ## Usage
 
-**Training Example**
-To train the model on the TEP dataset:
+### Training Example
+
+To train the model on the TEP benchmark dataset, execute the following script:
 
 ```bash
 python main_dspr.py \
@@ -131,13 +138,14 @@ python main_dspr.py \
   --c_out 52 \
   --des 'Exp' \
   --itr 1
+
 ```
 
 ---
 
 ## Contact
 
-For any questions, please open an issue or contact [yeranzhang36@gmail.com](mailto:yeranzhang36@gmail.com).
+For any questions, please open an issue or contact [yeranzhang36@gmail.com]().
 
 ## Citation
 
@@ -151,3 +159,5 @@ If you find this repository or our paper useful in your research, please conside
   pages={--},
   year={2026}
 }
+
+```
