@@ -53,7 +53,7 @@ Outputs from both streams are seamlessly integrated via a **Gated Fusion Mechani
 
 ---
 
-## ⚙️ Installation
+## Installation
 
 The environment setup follows the standard `Time-Series-Library` benchmark but excludes heavy dependencies required for Large Language Models (LLMs).
 
@@ -64,7 +64,7 @@ The environment setup follows the standard `Time-Series-Library` benchmark but e
 
 ```bash
 # Step 1: Clone the repository
-git clone [https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git](https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git)
+git clone [https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git]
 cd DSPR-Industrial-Forecasting
 
 # Step 2: Install dependencies
@@ -105,6 +105,12 @@ Prediction horizons ($H$) are explicitly customized to align with the intrinsic 
 | **SDWPF** (Wind Energy) | `12, 24, 36, 48` | Strictly targets the *inertial forecasting regime* for the ultra-short-term dispatch market before chaos dominates. |
 
 ### Performance Highlights
+
+<p align="center">
+  <img src="figures/full_results.jpg" alt="Granular Performance Breakdown" width="95%" />
+  <br />
+  <em>Figure 2: <strong>Granular performance comparison on industrial benchmarks.</strong> DSPR not only achieves the lowest MAE/RMSE but also maintains <strong>&gt;99% Mean Conservation Accuracy</strong> and high signal fidelity (<strong>TVR 83%–97%</strong>) across both short-term transients and long-term horizons.</em>
+</p>
 
 DSPR achieves Pareto-optimal performance across all benchmarks. It simultaneously reduces forecasting statistical errors (MAE/RMSE) compared to state-of-the-art baselines while enforcing strict adherence to physical laws.
 
