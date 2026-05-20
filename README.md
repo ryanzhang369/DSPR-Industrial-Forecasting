@@ -116,7 +116,7 @@ To rigorously evaluate Physical Consistency alongside statistical accuracy, we u
 To train the model on the TEP dataset:
 
 ```bash
-python run.py \
+python main_dspr.py \
   --is_training 1 \
   --root_path ./dataset/TEP/ \
   --data_path TEP.csv \
