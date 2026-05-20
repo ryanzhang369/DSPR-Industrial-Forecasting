@@ -64,7 +64,7 @@ The environment setup follows the standard `Time-Series-Library` benchmark but e
 
 ```bash
 # Step 1: Clone the repository
-git clone [https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git]
+git clone https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git
 cd DSPR-Industrial-Forecasting
 
 # Step 2: Install dependencies
@@ -89,7 +89,7 @@ Due to licensing constraints, raw data is not distributed with this repository. 
 
 ## Experiments & Full Results
 
-> **Supplementary Note:** Due to strict space constraints in the KDD 2026 proceedings, the granular performance breakdown across varying prediction horizons is provided as supplementary material. For offline reading, please refer to the [`Supplementary_Material.pdf`](https://www.google.com/search?q=./Supplementary_Material.pdf) located in the repository root.
+> **Supplementary Note:** Due to strict space constraints in the KDD 2026 proceedings, the granular performance breakdown across varying prediction horizons is provided as supplementary material. For offline reading, please refer to the [Supplementary Material](./Supplementary_Material.pdf) located in the repository root.
 
 We evaluate DSPR on four diverse industrial datasets representing a spectrum from micro-scale reactions to macro-scale environmental physics, rigorously testing DSPR's generalization across heterogeneous physical regimes.
 
@@ -122,30 +122,62 @@ DSPR achieves Pareto-optimal performance across all benchmarks. It simultaneousl
 
 ---
 
+
 ## Usage
 
-### Training Example
+### Prepare the raw datasets
 
-To train the model on the TEP benchmark dataset, execute the following script:
+Raw datasets are not distributed in this repository due to licensing restrictions.
+
+Please manually download the raw files and place them in the repository root with the following filenames:
+
+- `TEP_FaultFree_Training.RData`
+- `wtbdata_245days.csv`
+
+> **Note**
+> The current preprocessing script is hard-coded to read these two files from the repository root.
+
+
+### Preprocess the datasets
+
+Run the preprocessing script:
+
+```bash
+python data_provider/industrial_data_preprocessor.py
+````
+
+This will generate the following processed files in the repository root:
+
+* `tep_reactor_pressure_target.csv`
+* `sdwpf_turbine_1_processed.csv`
+
+> **Note**
+> The current preprocessing script processes both datasets in a single run. Make sure both raw files are available before executing it.
+
+
+### Train DSPR on the TEP dataset
 
 ```bash
 python main_dspr.py \
-  --is_training 1 \
-  --root_path ./dataset/TEP/ \
-  --data_path TEP.csv \
-  --model_id TEP_96_96 \
-  --model DSPR \
-  --data custom \
-  --features M \
+  --run_name tep_dspr \
+  --root_path ./ \
+  --data_path tep_reactor_pressure_target.csv \
+  --target Reactor_Pressure \
+  --features MS \
+  --adj_path ./tep_physics_prior.csv \
   --seq_len 96 \
-  --pred_len 96 \
-  --enc_in 52 \
-  --dec_in 52 \
-  --c_out 52 \
-  --des 'Exp' \
-  --itr 1
-
+  --pred_len 24 \
+  --label_len 48 \
+  --freq t \
+  --batch_size 32 \
+  --train_epochs 10 \
+  --learning_rate 0.001 \
+  --patience 3 \
+  --gpu 0 \
+  --phys_alpha 0.5 \
+  --lambda_phys 0.01
 ```
+
 
 ---
 
