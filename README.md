@@ -135,6 +135,19 @@ python main_dspr.py \
 
 ---
 
-### Contact
+## Contact
 
-For any questions, please open an issue or contact [yerazhang2-c@my.cityu.edu.hk](mailto:yerazhang2-c@my.cityu.edu.hk).
+For any questions, please open an issue or contact [yeranzhang36@gmail.com](mailto:yeranzhang36@gmail.com).
+
+## Citation
+
+If you find this repository or our paper useful in your research, please consider citing our work:
+
+```bibtex
+@inproceedings{zhang2026dspr,
+  title={DSPR: Dual-Stream Physics-Residual Networks for Trustworthy Industrial Time Series Forecasting},
+  author={Zhang, Yeran and Yang, Pengwei and Wang, Guoqing and Li, Tianyu},
+  booktitle={Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining},
+  pages={--},
+  year={2026}
+}
