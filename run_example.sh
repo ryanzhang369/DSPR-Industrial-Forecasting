@@ -1,31 +1,38 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-export CUDA_VISIBLE_DEVICES=0
+
+export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 unset LD_LIBRARY_PATH
 
 cd "$(dirname "$0")"
 
+PYTHON="${PYTHON:-python}"
 run="SDWPF_Turbine1_Run01"
+raw_sdwpf="wtbdata_245days.csv"
+raw_tep="TEP_FaultFree_Training.RData"
 data="sdwpf_turbine_1_processed.csv"
 phys="sdwpf_physics_prior.csv"
 
-echo "Preprocessing data..."
-python data_provider/industrial_data_preprocessor.py
+save_dir="./records/"
 
-echo "Running DSPR example..."
-python -u main_dspr.py \
+mkdir -p "$save_dir"
+
+echo "Running DSPR example on SDWPF..."
+
+"$PYTHON" -u main_dspr.py \
+  --run_name "$run" \
   --root_path ./ \
   --data_path "$data" \
   --target Patv \
-  --adj_path "$phys" \
-  --run_name "$run" \
-  --save_dir ./records/ \
   --features MS \
+  --adj_path "$phys" \
+  --control_col Pab1 \
+  --save_dir "$save_dir" \
   --freq t \
   --seq_len 96 \
   --label_len 0 \
   --pred_len 48 \
-  --control_col Pab1 \
   --batch_size 64 \
   --learning_rate 0.0001 \
   --train_epochs 15 \
@@ -40,3 +47,4 @@ python -u main_dspr.py \
   --lambda_phys 0.05 \
   --gpu 0
 
+echo "Done. Results are saved under: $save_dir"
