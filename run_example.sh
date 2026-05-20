@@ -40,8 +40,3 @@ python -u main_dspr.py \
   --lambda_phys 0.05 \
   --gpu 0
 
-echo "Evaluating physics metrics..."
-res=$(ls -td ./records/${run}_*/results | head -1)
-python evaluate_physics.py --path "$res" --win 96 --step 4
-
-echo "Done. Results: $res"
