@@ -57,20 +57,34 @@ Outputs from both streams are seamlessly integrated via a **Gated Fusion Mechani
 
 The environment setup follows the standard `Time-Series-Library` benchmark but excludes heavy dependencies required for Large Language Models (LLMs).
 
-### Requirements
-* Python 3.8+
-* PyTorch 1.10+
-* NVIDIA CUDA toolkit (for GPU acceleration)
+1. Clone this repository.
 
 ```bash
-# Step 1: Clone the repository
 git clone https://github.com/ryanzhang369/DSPR-Industrial-Forecasting.git
-cd DSPR-Industrial-Forecasting
+cd DSPR-Industrial-Forecasting-main
 
-# Step 2: Install dependencies
+```
+
+2. Create a new Conda environment.
+```bash
+conda create -n dspr python=3.11
+conda activate dspr
+
+```
+
+
+3. Install Core Dependencies
+> ⚠️ **CUDA Compatibility Notice** The torch prebuilt package is **CUDA-version specific**. (See https://pytorch.org/get-started/previous-versions/) Please make sure to install the package that matches your local CUDA version (e.g., `cu118` or `cu121`). Recommended: `torch==2.5.1`
+
+
+```bash
+pip install torch==2.5.1 --index-url [https://download.pytorch.org/whl/cu121](https://download.pytorch.org/whl/cu121)
+
 pip install -r requirements.txt
 
 ```
+
+
 
 ---
 
